@@ -252,6 +252,19 @@ await p2.goto(BASE + '/index.html#/');
 await p2.waitForTimeout(1500);
 await p2.screenshot({ path: path.join(OUT, '12-phone-home.png') });
 
+// Opening index.html straight from a folder (double-click) must work too.
+const fileCtx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+await routeCdn(fileCtx);
+const p3 = await fileCtx.newPage();
+p3.on('pageerror', (e) => pageErrors.push('file:// ' + String(e)));
+await p3.goto('file://' + path.join(ROOT, 'index.html') + '#/level/1');
+await p3.waitForSelector('.CodeMirror');
+await p3.waitForFunction(() => document.querySelector('.py-status.ready'), null, { timeout: 180000 });
+await p3.evaluate(() => document.querySelector('.CodeMirror').CodeMirror.setValue('move_right()\nmove_right()\nmove_right()\n'));
+await p3.click('#btn-run');
+await p3.waitForSelector('#modal:not([hidden])', { timeout: 30000 });
+check(/PERFECT/.test(await p3.textContent('#modal-title')), 'Works when index.html is opened as a file');
+
 check(pageErrors.length === 0, 'No JavaScript errors on the page', pageErrors.join('\n       '));
 
 await browser.close();

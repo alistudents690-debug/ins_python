@@ -9,7 +9,7 @@
  *   C  cactus               W  water                   L  lava
  *   (space) empty sky - the snake falls off!
  */
-(function (root) {
+function SnakeEngineFactory(root) {
   'use strict';
 
   var DIRS = {
@@ -248,5 +248,9 @@
   };
 
   root.SnakeEngine = api;
-  if (typeof module !== 'undefined' && module.exports) module.exports = api;
-})(typeof self !== 'undefined' ? self : this);
+  return api;
+}
+
+// The Python worker gets its own copy of this factory (see runner.js).
+SnakeEngineFactory(typeof self !== 'undefined' ? self : this);
+if (typeof module !== 'undefined' && module.exports) module.exports = this.SnakeEngine || self.SnakeEngine;

@@ -1,13 +1,13 @@
 /*
  * Runs the player's Python code with Pyodide inside a Web Worker,
  * so a never-ending loop can't freeze the page.
+ *
+ * This whole function is copied into the worker by runner.js (as a blob),
+ * so the site also works when index.html is opened straight from a folder.
  */
 /* global importScripts, loadPyodide, SnakeEngine */
+function BlockSnakeWorker(PYODIDE_URL, STDLIB_JS) {
 'use strict';
-
-var PYODIDE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/';
-
-importScripts('engine.js');
 
 var currentGame = null;
 
@@ -313,7 +313,26 @@ def run_player(code, line_limit, tests):
     return json.dumps(result)
 `;
 
+// Some hosts can't serve .zip files. Then the standard library comes as
+// base64 inside a script, and we answer Pyodide's request for the zip here.
+function useBundledStdlib() {
+  importScripts(STDLIB_JS);
+  var raw = atob(self.BLOCKSNAKE_STDLIB_B64);
+  var bytes = new Uint8Array(raw.length);
+  for (var i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+  self.BLOCKSNAKE_STDLIB_B64 = null;
+  var zipURL = PYODIDE_URL + 'python_stdlib.zip';
+  var realFetch = self.fetch;
+  self.fetch = function (url) {
+    if (String(url) === zipURL) {
+      return Promise.resolve(new Response(bytes, { headers: { 'Content-Type': 'application/zip' } }));
+    }
+    return realFetch.apply(this, arguments);
+  };
+}
+
 var pyodideReady = (async function () {
+  if (STDLIB_JS) useBundledStdlib();
   importScripts(PYODIDE_URL + 'pyodide.js');
   var py = await loadPyodide({ indexURL: PYODIDE_URL });
   py.registerJsModule('_snake', snakeBridge);
@@ -377,3 +396,4 @@ self.onmessage = async function (ev) {
   }
   self.postMessage({ type: 'result', id: msg.id, runs: runs, analysis: analysis });
 };
+}

@@ -42,14 +42,14 @@ Pip the snake only moves when you write and run Python code, like `move_right()`
 
 ## Run it on your computer
 
-It's a plain static website, so any web server works:
+Download the project and **double-click `index.html`**. It opens in your browser (you need to be online so it can load Python).
+
+Or serve it with any web server:
 
 ```bash
 python3 -m http.server 8000
 # open http://localhost:8000
 ```
-
-(Opening `index.html` directly as a file won't work, because the Python worker needs a web server.)
 
 The page loads [Pyodide](https://pyodide.org) (real Python compiled for the browser), Three.js and
 CodeMirror from public CDNs. The first **Run** takes a few seconds while Python wakes up.
@@ -59,6 +59,14 @@ CodeMirror from public CDNs. The first **Run** takes a few seconds while Python 
 1. Push this repository to GitHub.
 2. Go to **Settings → Pages**, choose **Deploy from a branch**, then pick your branch and the `/ (root)` folder.
 3. Your site will be at `https://<your-name>.github.io/<repo-name>/`.
+
+## One-folder copy (no CDN for Python)
+
+`node tools/build-single.mjs` builds `dist/`, which contains:
+- `blocksnake.html`: the page, with all of its CSS and JavaScript inside
+- `pyodide/`: a local copy of Python
+
+Use it for hosts that can't load Python from jsDelivr.
 
 ## Tests
 
