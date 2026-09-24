@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BlockSnake: Learn Python</title>
+  <meta name="description" content="Learn real Python by guiding a blocky snake through a block world. Free, runs in your browser, made for beginners and kids.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" id="favicon" href="data:,">
+</head>
+<body>
+  <!-- ===================== HOME ===================== -->
+  <section id="view-home" class="view" hidden>
+    <div id="home-world" class="home-world"></div>
+    <div class="home-overlay">
+      <div class="logo-wrap">
+        <h1 class="logo" aria-label="BlockSnake">BLOCKSNAKE</h1>
+        <div class="logo-sub">PYTHON ACADEMY</div>
+        <div class="splash" id="splash">Sssssuper!</div>
+      </div>
+      <nav class="home-menu">
+        <a class="mc-btn big" href="#/map" data-sfx>Adventure</a>
+        <a class="mc-btn big" href="#/practice" data-sfx>Practice Zone</a>
+        <div class="menu-row">
+          <a class="mc-btn" href="#/free" data-sfx>Free Play</a>
+          <a class="mc-btn" href="#/playground" data-sfx>Playground</a>
+        </div>
+        <div class="menu-row">
+          <button class="mc-btn" id="btn-howto" data-sfx>How to Play</button>
+          <button class="mc-btn" data-mute data-sfx>Sound: On</button>
+        </div>
+      </nav>
+      <div class="home-foot">
+        <span id="py-status-home" class="py-status">Python is waking up&hellip;</span>
+        <span class="home-note">Real Python &middot; runs in your browser &middot; no sign-up</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== WORLD MAP ===================== -->
+  <section id="view-map" class="view dirt-bg" hidden>
+    <header class="topbar">
+      <a class="mc-btn small" href="#/" data-sfx>&larr; Menu</a>
+      <div class="xp">
+        <div class="xp-level" id="xp-level">0</div>
+        <div class="xp-bar"><div class="xp-fill" id="xp-fill"></div></div>
+        <div class="xp-label" id="xp-label">0 / 72 stars</div>
+      </div>
+      <button class="mc-btn small" data-mute data-sfx>Sound: On</button>
+    </header>
+    <main class="map-main">
+      <h2 class="screen-title">Choose a Level</h2>
+      <div id="world-list" class="world-list"></div>
+      <label class="teacher"><input type="checkbox" id="unlock-all"> Unlock every level (for teachers)</label>
+    </main>
+  </section>
+
+  <!-- ===================== LEVEL ===================== -->
+  <section id="view-level" class="view dirt-bg" hidden>
+    <header class="topbar">
+      <a class="mc-btn small" href="#/map" id="level-back" data-sfx>&larr; Levels</a>
+      <div class="level-title">
+        <span class="level-world" id="level-world">World 1</span>
+        <span class="level-name" id="level-name">Level</span>
+      </div>
+      <span id="py-status" class="py-status">Python is waking up&hellip;</span>
+      <button class="mc-btn small" data-mute data-sfx>Sound: On</button>
+    </header>
+    <main class="level-grid">
+      <section class="play-col">
+        <div class="game-box" id="game-box">
+          <div class="hud">
+            <span class="hud-chip"><img alt="" class="px-icon" data-sprite="apple"> <b id="hud-apples">0</b> left</span>
+            <span class="hud-chip" id="hud-map" hidden>Map 1 of 1</span>
+          </div>
+          <div class="game-tools">
+            <label class="speed">Speed <input type="range" id="speed" min="0.5" max="4" step="0.5" value="1"></label>
+            <button class="mc-btn tiny" id="btn-camera" title="Reset camera">View</button>
+          </div>
+          <div class="drag-tip">Drag to look around</div>
+        </div>
+        <div class="hotbar" id="hotbar" aria-label="Code blocks: click to add to your code"></div>
+        <div class="console mc-panel dark">
+          <div class="console-head">Output</div>
+          <div class="console-body" id="output"></div>
+        </div>
+      </section>
+      <section class="code-col">
+        <article class="book" id="lesson">
+          <details open id="lesson-details">
+            <summary><span id="lesson-title">Lesson</span></summary>
+            <div class="goal" id="lesson-goal"></div>
+            <div class="lesson-text" id="lesson-text"></div>
+            <div class="example">
+              <div class="example-head">Example <button class="mc-btn tiny" id="btn-copy-example">Copy to code</button></div>
+              <pre id="lesson-example"></pre>
+            </div>
+            <ul class="star-goals" id="star-goals"></ul>
+          </details>
+        </article>
+        <div class="editor-wrap">
+          <div class="editor-head"><span>Your Python code</span><span class="kbd">Ctrl + Enter to run</span></div>
+          <textarea id="code" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
+        </div>
+        <div class="controls">
+          <button class="mc-btn green big-run" id="btn-run">&#9654; Run</button>
+          <button class="mc-btn" id="btn-stop" disabled>&#9632; Stop</button>
+          <button class="mc-btn" id="btn-hint">Hint</button>
+          <button class="mc-btn" id="btn-reset">Reset</button>
+          <button class="mc-btn" id="btn-solution" disabled title="Unlocks after 3 tries">Solution</button>
+        </div>
+        <div class="message" id="message" hidden></div>
+      </section>
+    </main>
+  </section>
+
+  <!-- ===================== PRACTICE ===================== -->
+  <section id="view-practice" class="view dirt-bg" hidden>
+    <header class="topbar">
+      <a class="mc-btn small" href="#/" data-sfx>&larr; Menu</a>
+      <div class="level-title"><span class="level-name">Practice Zone</span></div>
+      <span class="py-status" data-status>Python is waking up&hellip;</span>
+      <button class="mc-btn small" data-mute data-sfx>Sound: On</button>
+    </header>
+    <main class="practice-grid">
+      <aside class="mc-panel practice-list" id="practice-list"></aside>
+      <section class="practice-main">
+        <article class="book" id="practice-task"></article>
+        <div class="editor-wrap">
+          <div class="editor-head"><span>Your Python code</span><span class="kbd">Ctrl + Enter to check</span></div>
+          <textarea id="practice-code" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
+        </div>
+        <div class="controls">
+          <button class="mc-btn green big-run" id="practice-run">&#10003; Check</button>
+          <button class="mc-btn" id="practice-hint">Hint</button>
+          <button class="mc-btn" id="practice-reset">Reset</button>
+          <button class="mc-btn" id="practice-solution">Solution</button>
+          <button class="mc-btn" id="practice-next">Next &rarr;</button>
+        </div>
+        <div class="message" id="practice-message" hidden></div>
+        <div class="console mc-panel dark">
+          <div class="console-head">Output</div>
+          <div class="console-body" id="practice-output"></div>
+        </div>
+      </section>
+    </main>
+  </section>
+
+  <!-- ===================== PLAYGROUND ===================== -->
+  <section id="view-playground" class="view dirt-bg" hidden>
+    <header class="topbar">
+      <a class="mc-btn small" href="#/" data-sfx>&larr; Menu</a>
+      <div class="level-title"><span class="level-name">Python Playground</span></div>
+      <span class="py-status" data-status>Python is waking up&hellip;</span>
+      <button class="mc-btn small" data-mute data-sfx>Sound: On</button>
+    </header>
+    <main class="playground-grid">
+      <article class="book">
+        <h3>Your own Python lab</h3>
+        <p>Write any Python you like and press <b>Run</b>. Try maths, loops, making lists, or print patterns!</p>
+      </article>
+      <div class="editor-wrap tall">
+        <div class="editor-head"><span>Python</span><span class="kbd">Ctrl + Enter to run</span></div>
+        <textarea id="playground-code" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
+      </div>
+      <div class="controls">
+        <button class="mc-btn green big-run" id="playground-run">&#9654; Run</button>
+        <button class="mc-btn" id="playground-clear">Clear output</button>
+      </div>
+      <div class="message" id="playground-message" hidden></div>
+      <div class="console mc-panel dark">
+        <div class="console-head">Output</div>
+        <div class="console-body" id="playground-output"></div>
+      </div>
+    </main>
+  </section>
+
+  <!-- ===================== DIALOGS ===================== -->
+  <div class="modal" id="modal" hidden>
+    <div class="modal-box mc-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <h2 id="modal-title">Title</h2>
+      <div id="modal-body"></div>
+      <div class="modal-actions" id="modal-actions"></div>
+    </div>
+  </div>
+
+  <noscript><p class="noscript">BlockSnake needs JavaScript turned on.</p></noscript>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/levels.js"></script>
+  <script src="js/practice.js"></script>
+  <script src="js/textures.js"></script>
+  <script src="js/sfx.js"></script>
+  <script src="js/world3d.js"></script>
+  <script src="js/runner.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
